@@ -1,3 +1,10 @@
+week 7 - wrote research section
+
 Week 8 - created python wrapper for  cpp code provided for MoCHy algorithm for simplicity purposes.
        - Figured out how to go about implementing random hypergraph generation - WIP
-       - Started to write pipeline for pulling data from MIMIC and generating hypergraphs in format required for MoCHy
+       - Started to write pipeline for pulling data from MIMIC and generating hypergraphs in format required 
+              for MoCHy
+       
+week 9 - Essentially restarted and then completed pipeline for pulling data from MIMIC and generating 
+              hypergraphs in format required for MoCHy.
+       - started implementing random hypergraph generation. Stuck slightly on understanding section of the pseudocode.
