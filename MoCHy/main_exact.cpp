@@ -15,18 +15,18 @@
 #include "motif_id.cpp"
 
 namespace py = pybind11;
-#include "read_data.cpp"
-#include "motif_id.cpp"
+
 
 //g++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes)
-// main_exact.cpp -o main_exact$(python3-config --extension-suffix)
+//main_exact.cpp -o main_exact$(python3-config --extension-suffix)
 using namespace std;
 
 inline long long convert_id(int hyperedge_a, int hyperedge_b){
 	return hyperedge_a * (1LL << 31) + hyperedge_b;
 }
 
-vector<long long> h_motifs_count_individual(int argc, char *argv[])
+vector<long long> h_motifs_count_individual(string inputGraph)
+//int main(int argc, char *argv[])
 {
 	clock_t start;
 	clock_t run_start;
@@ -163,7 +163,7 @@ vector<long long> h_motifs_count_individual(int argc, char *argv[])
 	return h_motif;
 }
 
-PYBIND11_MODULE(main_approx_ver2_wip, m) {
+PYBIND11_MODULE(main_exact, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
     m.def("h_motifs_count_individual", &h_motifs_count_individual, "A function that adds two numbers");
