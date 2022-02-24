@@ -39,7 +39,7 @@ vector<long double> h_motifs_count(string inputGraph)
 	
 	int sampling_size = 10000;
 
-	string graphFile = "comorb_hypergraph.txt";
+	string graphFile = "comorb_hypergraph_no_dups.txt";
 
 	cout << "Sampling size: " << sampling_size << endl << endl;
 

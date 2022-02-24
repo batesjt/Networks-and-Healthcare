@@ -8,23 +8,31 @@
 #include <ctime>
 #include <unordered_map>
 #include <unordered_set>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include "read_data.cpp"
 #include "motif_id.cpp"
 
+namespace py = pybind11;
+#include "read_data.cpp"
+#include "motif_id.cpp"
+
+//g++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes)
+// main_exact.cpp -o main_exact$(python3-config --extension-suffix)
 using namespace std;
 
 inline long long convert_id(int hyperedge_a, int hyperedge_b){
 	return hyperedge_a * (1LL << 31) + hyperedge_b;
 }
 
-int main(int argc, char *argv[])
+vector<long long> h_motifs_count_individual(int argc, char *argv[])
 {
 	clock_t start;
 	clock_t run_start;
 	int progress;
 
-	string graphFile = "dblp_graph.txt";
+	string graphFile = "comorb_hypergraph_no_dups.txt";
 
 	// Read data
 	start = clock();
@@ -152,5 +160,11 @@ int main(int argc, char *argv[])
 	hyperedge_adj.clear();
 	hyperedge_inter.clear();
 	
-	return 0;
+	return h_motif;
+}
+
+PYBIND11_MODULE(main_approx_ver2_wip, m) {
+    m.doc() = "pybind11 example plugin"; // optional module docstring
+
+    m.def("h_motifs_count_individual", &h_motifs_count_individual, "A function that adds two numbers");
 }
