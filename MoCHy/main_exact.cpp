@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 	// Exact hypergraph motif counting
 	start = clock();
 	vector<long long> h_motif(30, 0);
+	vector<long long> h_motif_curr(30, 0);
 	vector<int> intersection(E, 0);
 	std::fill(upd_time.begin(), upd_time.end(), -1LL);
 
@@ -115,11 +116,19 @@ int main(int argc, char *argv[])
 						for (int k = 0; k < C_ab; k++){ if(nodes.find(intersection[k]) != it_end) g_abc++;}
 						int motif_index = get_motif_index_new(size_a, size_b, size_c, C_ab, C_bc, C_ca, g_abc);
 						h_motif[motif_index]++;
+						h_motif_curr[motif_index]++;
 					}
 				} else {
 					int motif_index = get_motif_index_new(size_a, size_b, size_c, C_ab, 0, C_ca, 0);
 					h_motif[motif_index]++;
+					h_motif_curr[motif_index]++;
 				}
+				int index = 0;
+                for (int i = 0; i < 30; i++){
+                    if (i == 0 || i == 1 || i == 4 || i == 6) continue;
+                    cout << fixed << "motif " << ++index << ": " << fixed << h_motif_curr[i] << endl;
+                    h_motif_curr[i] = 0;
+                }
 			}
 			
 		}	
