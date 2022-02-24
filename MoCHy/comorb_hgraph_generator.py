@@ -1,8 +1,12 @@
+import json
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 import hypernetx as hnx
+import csv
+import collections
 
 ##Currently DON'T DEAL WITH UNKOWNS/UNOBTAINABLE/NOT SPECIFIED
 dataset = pd.read_csv('demographic_comrb_primary_secondary_code.csv')
@@ -126,7 +130,7 @@ def countComorbiditesDegrees():
 
 def getNodeDegrees():
     return np.concatenate([countComorbiditesDegrees(), countGenderNodesDegrees(), countAgeNodesDegrees()
-                              , countEthnicityNodesDegrees(), countReligionNodesDegrees()])
+                              , countEthnicityNodesDegrees()])
 
 
 # convert demographics to appropriate nodes
@@ -152,10 +156,10 @@ degreeCount = 3
 # 6 - religion
 
 myDict = {}
-#editted to halp format
+# editted to halp format
 with open(outputfile, 'wb') as wfd:
-    for i in range(dataset["age"].count()):
-        #myList = [str(dataset.iloc[i, 2]), str(dataset.iloc[i, 5]), str(dataset.iloc[i, 3])]
+    for i in range(len(dataset["age"])):
+        myList = [str(dataset.iloc[i, 2]), str(dataset.iloc[i, 5]), str(dataset.iloc[i, 3])]
         wfd.write((dataset.iloc[i, 2] + ',' +
                     str(dataset.iloc[i, 5]) + ',' +
                     str(dataset.iloc[i, 3])
@@ -164,38 +168,71 @@ with open(outputfile, 'wb') as wfd:
         for j in range(10, 39):
             value = int(dataset.iloc[i, j])
             if (value != -1):
-                #myList.append(str(value))
+                myList.append(str(value))
                 wfd.write(("," + str(value)).encode())
                 degreeCount += 1
         wfd.write(('\n').encode())
         #wfd.write((' 1' + "\n").encode())
         hyperedgeDegrees[i] = degreeCount
         degreeCount = 3
-        #myDict[i] = myList
+        myDict[i] = myList
     wfd.close()
-#H = hnx.Hypergraph(myDict)
-#hnx.draw(H)
+# H = hnx.Hypergraph(myDict)
+# hnx.draw(H)
+print(countComorbiditesDegrees())
+print(np.sum(countComorbiditesDegrees()))
+
+
+print("graph generated")
+
 
 ##################
 def random_graph_gen(nodeDegreesArray, hyperedgeDegreesArray):
+    print("generating random")
+    outputDict = {}
     nodeCount = len(nodeDegreesArray)
-    edges = open(outputfile, "r")
-    output = open("random_hypergraph.txt", "w")
+    # edges = open(outputfile, "r")
     inputedges = np.arange(len(hyperedgeDegreesArray))
+    print("*********")
+    print(len(inputedges))
     nodes = np.arange(nodeCount)
     nodeDegreeSum = np.sum(nodeDegreesArray)
     hyperedgeDegreeSum = np.sum(hyperedgeDegreesArray)
+    print(hyperedgeDegreeSum)
+    print(nodeDegreeSum)
     nodeProbability = np.array(list(map((lambda x: x / nodeDegreeSum), nodeDegreesArray)))
     print(nodeProbability.sum())
     hyperedgeProbability = np.array(list(map((lambda x: x / hyperedgeDegreeSum), hyperedgeDegreesArray)))
+    print(hyperedgeProbability.sum())
+    print(hyperedgeProbability[1])
+    print(hyperedgeProbability[-4])
     outputNodes = np.empty(nodeCount)
     for i in range(int(nodeDegreeSum)):
         node = np.random.choice(nodes, 1, p=nodeProbability)
-        edge = edges.readline(np.random.choice(inputedges, 1, p=hyperedgeProbability)[0])
-        output.write(edge.strip() + ", " + str(node[0]) + "\n")
+        edge = np.random.choice(inputedges, 1, p=hyperedgeProbability)[0]
+        #print(str(node[0]))
+        if node[0] not in outputDict.get(edge, []):
+            outputDict[edge] = outputDict.get(edge, []) + [node[0]]
+        # output.write(edge.strip() + ", " + str(node[0]) + "\n")
+    print("number edges in random")
+    print(len(outputDict))
 
-    edges.close()
-    output.close()
+
+    return outputDict
 
 
-#random_graph_gen(getNodeDegrees(), hyperedgeDegrees)
+randDict = random_graph_gen(getNodeDegrees(), hyperedgeDegrees)
+
+def saveRandFile(randFile):
+    sortDict = collections.OrderedDict(sorted(randDict.items()))
+    with open(randFile, "w") as f:
+        for value in sortDict.values():
+            #f.write(str((value[0])))
+            for elem in value:
+                f.write(str(elem))
+                if elem != value[-1]:
+                    f.write(",")
+            f.write(('\n'))
+
+
+saveRandFile("rand_graph5.txt")
