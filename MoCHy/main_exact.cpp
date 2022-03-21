@@ -25,18 +25,18 @@ inline long long convert_id(int hyperedge_a, int hyperedge_b){
 	return hyperedge_a * (1LL << 31) + hyperedge_b;
 }
 
-vector<long long> h_motifs_count_individual(string inputGraph)
+vector<vector<long long>> h_motifs_count_individual(string inputGraph)
 //int main(int argc, char *argv[])
 {
 	clock_t start;
 	clock_t run_start;
 	int progress;
 
-	string graphFile = "comorb_hypergraph_no_dups.txt";
+	string graphFile = "icd9Only.txt";
 
 	// Read data
 	start = clock();
-	vector< vector<int> > node2hyperedge;
+	vector< vector<long> > node2hyperedge;
 	vector< vector<int> > hyperedge2node;
 	vector< unordered_set<int> > hyperedge2node_set;
 	read_data(graphFile, node2hyperedge, hyperedge2node, hyperedge2node_set);
@@ -90,7 +90,10 @@ vector<long long> h_motifs_count_individual(string inputGraph)
 	// Exact hypergraph motif counting
 	start = clock();
 	vector<long long> h_motif(30, 0);
-	vector<long long> h_motif_curr(30, 0);
+	//vector<long long> h_motif_curr(30, 0);
+	vector<vector<long long> > h_motif_curr(
+	    E,
+	    vector<long long>(30));
 	vector<int> intersection(E, 0);
 	std::fill(upd_time.begin(), upd_time.end(), -1LL);
 
@@ -124,19 +127,14 @@ vector<long long> h_motifs_count_individual(string inputGraph)
 						for (int k = 0; k < C_ab; k++){ if(nodes.find(intersection[k]) != it_end) g_abc++;}
 						int motif_index = get_motif_index_new(size_a, size_b, size_c, C_ab, C_bc, C_ca, g_abc);
 						h_motif[motif_index]++;
-						h_motif_curr[motif_index]++;
+						h_motif_curr[hyperedge_a][motif_index]++;
 					}
 				} else {
 					int motif_index = get_motif_index_new(size_a, size_b, size_c, C_ab, 0, C_ca, 0);
 					h_motif[motif_index]++;
-					h_motif_curr[motif_index]++;
+					h_motif_curr[hyperedge_a][motif_index]++;
 				}
-				int index = 0;
-                for (int i = 0; i < 30; i++){
-                    if (i == 0 || i == 1 || i == 4 || i == 6) continue;
-                    cout << fixed << "motif " << ++index << ": " << fixed << h_motif_curr[i] << endl;
-                    h_motif_curr[i] = 0;
-                }
+
 			}
 			
 		}	
@@ -160,7 +158,7 @@ vector<long long> h_motifs_count_individual(string inputGraph)
 	hyperedge_adj.clear();
 	hyperedge_inter.clear();
 	
-	return h_motif;
+	return h_motif_curr;
 }
 
 PYBIND11_MODULE(main_exact, m) {

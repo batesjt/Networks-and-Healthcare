@@ -5,7 +5,7 @@
 using namespace std;
 
 
-void read_data(string path, vector< vector<int> >& node2hyperedge, vector< vector<int> >& hyperedge2node, vector< unordered_set<int> >& hyperedge2node_set)
+void read_data(string path, vector< vector<long> >& node2hyperedge, vector< vector<int> >& hyperedge2node, vector< unordered_set<int> >& hyperedge2node_set)
 {
 	ifstream graphFile(path.c_str());
 	string line;
@@ -29,7 +29,7 @@ void read_data(string path, vector< vector<int> >& node2hyperedge, vector< vecto
 				line.erase(0, pos + 1);
 			}
 			while(idx >= node2hyperedge.size()){
-				node2hyperedge.push_back(vector<int>());
+				node2hyperedge.push_back(vector<long>());
 			}
 			if(node2hyperedge[idx].empty() || node2hyperedge[idx].back() != num_hyperedges){
 				node2hyperedge[idx].push_back(num_hyperedges);
